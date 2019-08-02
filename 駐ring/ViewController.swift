@@ -184,8 +184,6 @@ class ViewController: UIViewController {
                 print("failed to write: \(error)") //例外処理
             }
         }
-        content.text = "経度：" + contents1 //経度を表示(デバッグ用)
-        content2.text = "経度：" + contents2 //緯度を表示(デバッグ用)
     }
     
     @IBAction func watch_map(_ sender: UIButton) {
