@@ -1,0 +1,6 @@
+framework module Pods__ringTests {
+  umbrella header "Pods-駐ringTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

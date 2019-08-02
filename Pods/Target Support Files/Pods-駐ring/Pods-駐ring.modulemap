@@ -1,0 +1,6 @@
+framework module Pods__ring {
+  umbrella header "Pods-駐ring-umbrella.h"
+
+  export *
+  module * { export * }
+}
