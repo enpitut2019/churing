@@ -15,6 +15,7 @@
 //}
 import CoreLocation
 import UIKit
+import GoogleMaps
 
 // グローバル変数集
 let textFileName1 = "xpoint.txt" //経度記憶用のテキストファイル名
@@ -26,26 +27,82 @@ var contents2 = String("テスト\n用\nテキスト2") //緯度表示用のグ�
 var point1 = String("point1")
 var point2 = String("point2")
 
-
-
-class ViewController: UIViewController {
+class ViewControllerA: UIViewController {
+    // グーグルマップの設定をする変数
+    var googleMap : GMSMapView!
+    let latitude: CLLocationDegrees = 35.681541
+    let longitude: CLLocationDegrees = 139.767136
+    let marker: GMSMarker = GMSMarker()
     
-    
-    @IBAction func goBack(_ segue:UIStoryboardSegue) {}
-    
-    @IBAction func goNext(_ sender:UIButton) {
-        let next = storyboard!.instantiateViewController(withIdentifier: "nextView")
-        self.present(next,animated: true, completion: nil)
+    override func viewDidLoad() {
+        // スーパークラス
+        super.viewDidLoad()
+        
+        // ズームレベル.
+        let zoom: Float = 15
+        
+        // カメラを生成.
+        let camera: GMSCameraPosition = GMSCameraPosition.camera(withLatitude: latitude,longitude: longitude, zoom: zoom)
+        
+        // MapViewを生成.
+        googleMap = GMSMapView(frame: CGRectMake(0, 0, self.view.bounds.width, self.view.bounds.height/2))
+        
+        googleMap.isMyLocationEnabled = true
+        
+        // MapViewの現在地ボタンを有効にする.
+        googleMap.settings.myLocationButton = true
+        
+        // MapViewにカメラを追加.
+        googleMap.camera = camera
+        
+        //マーカーの作成
+        
+        marker.position = CLLocationCoordinate2DMake(latitude, longitude)
+        marker.title = "東武足利市駅"
+        marker.map = googleMap
+        self.view.addSubview(googleMap)
+        
+        if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
+            // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
+            let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
+            let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
+            do {
+                contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8)
+                contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8)
+            } catch let error as NSError {
+                print("failed to read: \(error)") //例外処理
+            }
+        }
+        
+        let latitudex = atof(contents1)
+        let longitudey = atof(contents2)
+        marker.position = CLLocationCoordinate2DMake(latitudex, longitudey)
+        let camera2: GMSCameraPosition = GMSCameraPosition.camera(withLatitude: latitudex,longitude: longitudey, zoom: 17.5)
+        googleMap.camera = camera2
+        
     }
     
+    func CGRectMake(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat) -> CGRect {
+        return CGRect(x: x, y: y, width: width, height: height)
+    }
+}
+
+class ViewController: UIViewController {
+    // グーグルマップの設定をする変数
+    var googleMap : GMSMapView!
     
+    //緯度経度 -> 足利市駅
+    var latitude2: CLLocationDegrees = 36.32913
+    var longitude2: CLLocationDegrees = 139.44827
+    
+    let latitude: CLLocationDegrees = 35.681541
+    let longitude: CLLocationDegrees = 139.767136
+    
+    let marker: GMSMarker = GMSMarker()
     
     // 位置情報取得のための変数
     var locationManager: CLLocationManager!
-    
-    
     //@IBOutlet weak var 取得時刻: UILabel!
-    
     
     // 起動時に実行される関数
     override func viewDidLoad() {
@@ -56,6 +113,7 @@ class ViewController: UIViewController {
         locationManager = CLLocationManager()
         // CLLocationManagerDelegateプロトコルを実装するクラスを指定する
         locationManager.delegate = self
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -83,7 +141,7 @@ class ViewController: UIViewController {
             do {
                 try initialText1.write(to: targetTextFilePath1, atomically: true, encoding: String.Encoding.utf8) //経度を書き込み（上書き）
                 try initialText2.write(to: targetTextFilePath2, atomically: true, encoding: String.Encoding.utf8) //緯度を書き込み（上書き）
-                //  テキストファイルを読み込む
+                //  テキストファイルを読み込む（デバッグ用）
                 do {
                     contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
                     contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
@@ -126,10 +184,17 @@ class ViewController: UIViewController {
                 print("failed to write: \(error)") //例外処理
             }
         }
-        content.text = "経度：" + contents1 //経度を表示
-        content2.text = "経度：" + contents2 //緯度を表示
+        content.text = "経度：" + contents1 //経度を表示(デバッグ用)
+        content2.text = "経度：" + contents2 //緯度を表示(デバッグ用)
     }
     
+    @IBAction func watch_map(_ sender: UIButton) {
+        self.view.addSubview(googleMap)
+    }
+    //このバージョンではCGRectMakeが使えないためWrapする関数を作成して回避する。
+    func CGRectMake(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat) -> CGRect {
+        return CGRect(x: x, y: y, width: width, height: height)
+    }
     
 }
 
@@ -174,5 +239,7 @@ extension ViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("位置情報の取得に失敗しました")
     }
+    
+    
 }
 
