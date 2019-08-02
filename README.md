@@ -14,4 +14,4 @@
 
 Takuma Hidaka, Rio Hirai, Ryosuke Saito, Takumi Nakayama, Mai Hujiwara
 
-### CIサービスのURL
+
