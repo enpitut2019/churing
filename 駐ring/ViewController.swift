@@ -23,16 +23,18 @@ var initialText1 = String("000.0000") //初期テキスト
 var initialText2 = String("000.0000") //初期テキスト
 var contents1 = String("テスト\n用\nテキスト1") //経度表示用のグローバル変数
 var contents2 = String("テスト\n用\nテキスト2") //緯度表示用のグローバル変数
+var point1 = String("point1")
+var point2 = String("point2")
+
+
 
 class ViewController: UIViewController {
     
     // 位置情報取得のための変数
     var locationManager: CLLocationManager!
     
-    //
-    @IBOutlet weak var 緯度: UILabel!
-    @IBOutlet weak var 経度: UILabel!
-    @IBOutlet weak var 取得時刻: UILabel!
+    
+    //@IBOutlet weak var 取得時刻: UILabel!
     
     
     // 起動時に実行される関数
@@ -45,6 +47,75 @@ class ViewController: UIViewController {
         // CLLocationManagerDelegateプロトコルを実装するクラスを指定する
         locationManager.delegate = self
     }
+    
+    //  「経度」ラベルに対応
+    @IBOutlet weak var content: UILabel!
+    //  「緯度」ラベルに対応
+    @IBOutlet weak var content2: UILabel!
+    
+    //  「位置を登録」ボタンに対応
+    @IBAction func button(_ sender: Any) {
+        // 表示テスト用の乱数を生成
+        initialText1 = point1 //経度用
+        initialText2 = point2 //緯度用
+        
+        // DocumentディレクトリのfileURLを取得
+        if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
+            // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
+            let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
+            let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
+            //  テキストファイルを作成
+            do {
+                try initialText1.write(to: targetTextFilePath1, atomically: true, encoding: String.Encoding.utf8) //経度を書き込み（上書き）
+                try initialText2.write(to: targetTextFilePath2, atomically: true, encoding: String.Encoding.utf8) //緯度を書き込み（上書き）
+                //  テキストファイルを読み込む
+                do {
+                    contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
+                    contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
+                } catch let error as NSError {
+                    print("failed to read: \(error)") //例外処理
+                }
+            } catch let error as NSError {
+                print("failed to write: \(error)") //例外処理
+            }
+        }
+    }
+    
+    //  「位置を表示」ボタンに対応
+    @IBAction func hyouzi(_ sender: Any) {
+        content.text = "経度：" + contents1 //経度を表示
+        content2.text = "経度：" + contents2 //緯度を表示
+    }
+    
+    //  「リセット」ボタンに対応
+    @IBAction func reset(_ sender: Any) {
+        initialText1 = "000.0000" //初期化テキスト
+        initialText2 = "000.0000" //初期化テキスト
+        // DocumentディレクトリのfileURLを取得
+        if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
+            // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
+            let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
+            let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
+            //  テキストファイルを作成
+            do {
+                try initialText1.write(to: targetTextFilePath1, atomically: true, encoding: String.Encoding.utf8) //経度を書き込み（上書き）
+                try initialText2.write(to: targetTextFilePath2, atomically: true, encoding: String.Encoding.utf8) //緯度を書き込み（上書き）
+                //  テキストファイルを読み込む
+                do {
+                    contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
+                    contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
+                } catch let error as NSError {
+                    print("failed to read: \(error)") //例外処理
+                }
+            } catch let error as NSError {
+                print("failed to write: \(error)") //例外処理
+            }
+        }
+        content.text = "経度：" + contents1 //経度を表示
+        content2.text = "経度：" + contents2 //緯度を表示
+    }
+    
+    
 }
 
 // 位置情報取得のための
@@ -80,9 +151,8 @@ extension ViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         for location in locations {
-            緯度.text = "緯度:\(location.coordinate.latitude)"
-            経度.text = "経度:\(location.coordinate.longitude)"
-            取得時刻.text = "取得時刻:\(location.timestamp.description)"
+            point1 = "\(location.coordinate.latitude)"
+            point2 = "\(location.coordinate.longitude)"
         }
     }
     
