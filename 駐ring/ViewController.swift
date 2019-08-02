@@ -30,6 +30,16 @@ var point2 = String("point2")
 
 class ViewController: UIViewController {
     
+    
+    @IBAction func goBack(_ segue:UIStoryboardSegue) {}
+    
+    @IBAction func goNext(_ sender:UIButton) {
+        let next = storyboard!.instantiateViewController(withIdentifier: "nextView")
+        self.present(next,animated: true, completion: nil)
+    }
+    
+    
+    
     // 位置情報取得のための変数
     var locationManager: CLLocationManager!
     
@@ -46,6 +56,11 @@ class ViewController: UIViewController {
         locationManager = CLLocationManager()
         // CLLocationManagerDelegateプロトコルを実装するクラスを指定する
         locationManager.delegate = self
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
     //  「経度」ラベルに対応
@@ -160,3 +175,4 @@ extension ViewController: CLLocationManagerDelegate {
         print("位置情報の取得に失敗しました")
     }
 }
+
