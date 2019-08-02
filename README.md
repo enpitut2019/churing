@@ -1,10 +1,11 @@
 # churing
-自転車の駐輪位置を記録し、帰る時に通知してくれるアプリ
+このアプリは自転車をとめた位置を”忘れる”という問題を解決するアプリです。
 
-## エレベーターピッチ
 
-## メンバー
+### エレベーターピッチ
 
-## デプロイ先URL
+### メンバー
+プロダクトオーナー：Seiji Nakayama
+Takuma Hidaka, Rio Hirai, Ryosuke Saito, Takumi Nakayama, Mai Hujiwara
 
-## CIサービスのURL
+### CIサービスのURL
