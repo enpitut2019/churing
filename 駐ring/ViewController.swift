@@ -46,6 +46,7 @@ class ViewControllerA: UIViewController {
         
         // MapViewを生成.
         googleMap = GMSMapView(frame: CGRectMake(0, 0, self.view.bounds.width, self.view.bounds.height/2))
+        googleMap.tag = 10
         
         googleMap.isMyLocationEnabled = true
         
@@ -56,11 +57,16 @@ class ViewControllerA: UIViewController {
         googleMap.camera = camera
         
         //マーカーの作成
-        
         marker.position = CLLocationCoordinate2DMake(latitude, longitude)
         marker.title = "東武足利市駅"
         marker.map = googleMap
         self.view.addSubview(googleMap)
+        
+        // 端末回転の通知機能を設定します。
+        let action = #selector(orientationDidChange(_:))
+        let center = NotificationCenter.default
+        let name = UIDevice.orientationDidChangeNotification
+        center.addObserver(self, selector: action, name: name, object: nil)
         
         if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
             // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
@@ -80,6 +86,63 @@ class ViewControllerA: UIViewController {
         let camera2: GMSCameraPosition = GMSCameraPosition.camera(withLatitude: latitudex,longitude: longitudey, zoom: 17.5)
         googleMap.camera = camera2
         
+    }
+    
+    @objc func orientationDidChange(_ notification: NSNotification) {
+        // 端末の向きを判定します。
+        // 縦向きを検知する場合、
+        //   device.orientation.isPortrait
+        // を判定します。
+        let device = UIDevice.current
+        let latitudex = atof(contents1)
+        let longitudey = atof(contents2)
+        if device.orientation.isLandscape {
+            if let viewWithTag = self.view.viewWithTag(10) {
+                viewWithTag.removeFromSuperview()
+            }
+            googleMap = GMSMapView(frame: CGRectMake(0, 0, self.view.bounds.width, self.view.bounds.height))
+            googleMap.tag = 10
+            googleMap.isMyLocationEnabled = true
+            // MapViewの現在地ボタンを有効にする.
+            googleMap.settings.myLocationButton = true
+            // ズームレベル.
+            let zoom: Float = 18
+            // MapViewにカメラを追加.
+            let camera: GMSCameraPosition = GMSCameraPosition.camera(withLatitude: latitudex,longitude: longitudey, zoom: zoom)
+            googleMap.camera = camera
+            //マーカーの作成
+            marker.position = CLLocationCoordinate2DMake(latitudex, longitudey)
+            marker.title = "東武足利市駅"
+            marker.map = googleMap
+            self.view.addSubview(googleMap)
+        } else {
+            if let viewWithTag = self.view.viewWithTag(10) {
+                viewWithTag.removeFromSuperview()
+            }
+            // ズームレベル.
+            let zoom: Float = 15
+            
+            // カメラを生成.
+            let camera: GMSCameraPosition = GMSCameraPosition.camera(withLatitude: latitudex,longitude: longitudey, zoom: zoom)
+            
+            // MapViewを生成.
+            googleMap = GMSMapView(frame: CGRectMake(0, 0, self.view.bounds.width, self.view.bounds.height/2))
+            googleMap.tag = 10
+            
+            googleMap.isMyLocationEnabled = true
+            
+            // MapViewの現在地ボタンを有効にする.
+            googleMap.settings.myLocationButton = true
+            
+            // MapViewにカメラを追加.
+            googleMap.camera = camera
+            
+            //マーカーの作成
+            marker.position = CLLocationCoordinate2DMake(latitudex, longitudey)
+            marker.title = "東武足利市駅"
+            marker.map = googleMap
+            self.view.addSubview(googleMap)
+        }
     }
     
     func CGRectMake(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat) -> CGRect {
