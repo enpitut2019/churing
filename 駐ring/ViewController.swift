@@ -197,8 +197,8 @@ class ViewController: UIViewController {
         myDateComponents.year = 2019
         myDateComponents.month = 8
         myDateComponents.day = 5
-        myDateComponents.hour = 13
-        myDateComponents.minute = 29
+        myDateComponents.hour = 16
+        myDateComponents.minute = 19
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: myDateComponents, repeats: false)
         
