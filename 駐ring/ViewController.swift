@@ -16,6 +16,7 @@
 import CoreLocation
 import UIKit
 import GoogleMaps
+import UserNotifications
 
 // グローバル変数集
 let textFileName1 = "xpoint.txt" //経度記憶用のテキストファイル名
@@ -68,6 +69,7 @@ class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         DisplayButton.addTarget(self, action: #selector(DisplayMenu(_:)), for: UIControl.Event.touchUpInside)
         DisplayButton.tag = 13
         
+
         // ズームレベル.
         let zoom: Float = 15
         
@@ -270,6 +272,40 @@ class ViewController: UIViewController {
         // CLLocationManagerDelegateプロトコルを実装するクラスを指定する
         locationManager.delegate = self
         
+        // 通知許可ダイアログを表示
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) {
+            (granted, error) in
+            // エラー処理
+        }
+        
+        // 通知内容の設定
+        let content = UNMutableNotificationContent()
+        
+        content.title = NSString.localizedUserNotificationString(forKey: "駐ring", arguments: nil)
+        content.body = NSString.localizedUserNotificationString(forKey: "おーーい！！そこの君！！！もうすぐ自転車に乗る時間だよ！忘れてたでしょ？絶対そうだと思ったよ。もうほんとに感謝してくれよな（ ｉ _ ｉ ）", arguments: nil)
+        content.sound = UNNotificationSound.default
+        
+      
+        var myDateComponents = DateComponents()
+        
+        myDateComponents.year = 2019
+        myDateComponents.month = 8
+        myDateComponents.day = 5
+        myDateComponents.hour = 16
+        myDateComponents.minute = 19
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: myDateComponents, repeats: false)
+        
+        let request = UNNotificationRequest(identifier: " Identifier", content: content, trigger: trigger)
+        
+        // 通知を登録
+        center.add(request) { (error : Error?) in
+            if error != nil {
+                // エラー処理
+            }
+        }
+
     }
     
     override func didReceiveMemoryWarning() {
