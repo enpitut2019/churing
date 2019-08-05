@@ -162,8 +162,8 @@ class ViewController: UIViewController {
     
     //  「リセット」ボタンに対応
     @IBAction func reset(_ sender: Any) {
-        initialText1 = "000.0000" //初期化テキスト
-        initialText2 = "000.0000" //初期化テキスト
+        initialText1 = "999.0000" //初期化テキスト
+        initialText2 = "999.0000" //初期化テキスト
         // DocumentディレクトリのfileURLを取得
         if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
             // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
@@ -183,6 +183,17 @@ class ViewController: UIViewController {
             } catch let error as NSError {
                 print("failed to write: \(error)") //例外処理
             }
+        }
+    }
+    
+    @IBAction func review(_ sender: Any) {
+        if atof(contents1) != 999 {
+            //まずは、同じstororyboard内であることをここで定義します
+            let storyboard: UIStoryboard = self.storyboard!
+            //ここで移動先のstoryboardを選択(今回の場合は先ほどsecondと名付けたのでそれを書きます)
+            let second = storyboard.instantiateViewController(withIdentifier: "map")
+            //ここが実際に移動するコードとなります
+            self.present(second, animated: true, completion: nil)
         }
     }
     
