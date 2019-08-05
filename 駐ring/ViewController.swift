@@ -58,13 +58,13 @@ class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         PickerView.dataSource = self
         
         DecideButton.frame = CGRectMake(0, self.view.bounds.height/2+PickerView.frame.height, self.view.bounds.width, 50)
-        DecideButton.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)
+        DecideButton.backgroundColor = UIColor(red: 0, green: 0, blue: 1.0, alpha: 1.0)
         DecideButton.setTitle("決定", for: UIControl.State.normal)
         DecideButton.addTarget(self, action: #selector(DecideMapView(_:)), for: UIControl.Event.touchUpInside)
         DecideButton.tag = 12
         
         DisplayButton.frame = CGRectMake(0, self.view.bounds.height/2+PickerView.frame.height, self.view.bounds.width, 50)
-        DisplayButton.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)
+        DisplayButton.backgroundColor = UIColor(red: 0, green: 0, blue: 1.0, alpha: 1.0)
         DisplayButton.setTitle("見た目を変える", for: UIControl.State.normal)
         DisplayButton.addTarget(self, action: #selector(DisplayMenu(_:)), for: UIControl.Event.touchUpInside)
         DisplayButton.tag = 13
@@ -293,7 +293,7 @@ class ViewController: UIViewController {
         myDateComponents.month = 8
         myDateComponents.day = 5
         myDateComponents.hour = 16
-        myDateComponents.minute = 19
+        myDateComponents.minute = 45
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: myDateComponents, repeats: false)
         
