@@ -28,7 +28,16 @@ var contents2 = String("テスト\n用\nテキスト2") //緯度表示用のグ�
 var point1 = String("point1")
 var point2 = String("point2")
 
-class ViewControllerA: UIViewController {
+class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+    
+    //地図の表示切替用の変数群
+    var PickerView = UIPickerView()
+    var DecideButton = UIButton()
+    
+    var DisplayButton = UIButton()
+    
+    let dataList = ["通常", "航空写真", "ハイブリット", "地形", "なし"]
+    
     // グーグルマップの設定をする変数
     var googleMap : GMSMapView!
     let latitude: CLLocationDegrees = 35.681541
@@ -38,6 +47,29 @@ class ViewControllerA: UIViewController {
     override func viewDidLoad() {
         // スーパークラス
         super.viewDidLoad()
+        
+        // PickerView のサイズと位置
+        PickerView.frame = CGRect(x: 0, y: self.view.bounds.height/2, width: self.view.bounds.width, height: 200)
+        PickerView.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.0)
+        PickerView.tag = 11
+        
+        // Delegate設定
+        PickerView.delegate = self
+        PickerView.dataSource = self
+        
+        DecideButton.frame = CGRectMake(0, self.view.bounds.height/2+PickerView.frame.height, self.view.bounds.width, 50)
+        DecideButton.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)
+        DecideButton.setTitle("決定", for: UIControl.State.normal)
+        DecideButton.addTarget(self, action: #selector(DecideMapView(_:)), for: UIControl.Event.touchUpInside)
+        DecideButton.tag = 12
+        
+        DisplayButton.frame = CGRectMake(0, self.view.bounds.height/2+PickerView.frame.height, self.view.bounds.width, 50)
+        DisplayButton.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)
+        DisplayButton.setTitle("見た目を変える", for: UIControl.State.normal)
+        DisplayButton.addTarget(self, action: #selector(DisplayMenu(_:)), for: UIControl.Event.touchUpInside)
+        DisplayButton.tag = 13
+        
+
         // ズームレベル.
         let zoom: Float = 15
         
@@ -61,6 +93,9 @@ class ViewControllerA: UIViewController {
         marker.title = "東武足利市駅"
         marker.map = googleMap
         self.view.addSubview(googleMap)
+        //self.view.addSubview(PickerView)
+        //self.view.addSubview(DecideButton)
+        self.view.addSubview(DisplayButton)
         
         // 端末回転の通知機能を設定します。
         let action = #selector(orientationDidChange(_:))
@@ -96,11 +131,15 @@ class ViewControllerA: UIViewController {
         let device = UIDevice.current
         let latitudex = atof(contents1)
         let longitudey = atof(contents2)
+        var state: GMSMapViewType = .normal
         if device.orientation.isLandscape {
             if let viewWithTag = self.view.viewWithTag(10) {
+                let targetmap = viewWithTag as! GMSMapView
+                state = targetmap.mapType
                 viewWithTag.removeFromSuperview()
             }
             googleMap = GMSMapView(frame: CGRectMake(0, 0, self.view.bounds.width, self.view.bounds.height))
+            googleMap.mapType = state
             googleMap.tag = 10
             googleMap.isMyLocationEnabled = true
             // MapViewの現在地ボタンを有効にする.
@@ -112,11 +151,12 @@ class ViewControllerA: UIViewController {
             googleMap.camera = camera
             //マーカーの作成
             marker.position = CLLocationCoordinate2DMake(latitudex, longitudey)
-            marker.title = "東武足利市駅"
             marker.map = googleMap
             self.view.addSubview(googleMap)
         } else {
             if let viewWithTag = self.view.viewWithTag(10) {
+                let targetmap = viewWithTag as! GMSMapView
+                state = targetmap.mapType
                 viewWithTag.removeFromSuperview()
             }
             // ズームレベル.
@@ -128,7 +168,7 @@ class ViewControllerA: UIViewController {
             // MapViewを生成.
             googleMap = GMSMapView(frame: CGRectMake(0, 0, self.view.bounds.width, self.view.bounds.height/2))
             googleMap.tag = 10
-            
+            googleMap.mapType = state
             googleMap.isMyLocationEnabled = true
             
             // MapViewの現在地ボタンを有効にする.
@@ -142,6 +182,61 @@ class ViewControllerA: UIViewController {
             marker.title = "東武足利市駅"
             marker.map = googleMap
             self.view.addSubview(googleMap)
+        }
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return dataList.count
+    }
+    
+    // UIPickerViewの最初の表示
+    func pickerView(_ pickerView: UIPickerView,
+                    titleForRow row: Int,
+                    forComponent component: Int) -> String? {
+        return dataList[row]
+    }
+    
+    // UIPickerViewのRowが選択された時の挙動
+    func pickerView(_ pickerView: UIPickerView,
+                    didSelectRow row: Int,
+                    inComponent component: Int) {
+        
+        if dataList[row] == "通常"{
+            googleMap.mapType = .normal
+        }else if dataList[row] == "航空写真"{
+            googleMap.mapType = .satellite
+        }else if dataList[row] == "ハイブリット"{
+            googleMap.mapType = .hybrid
+        }else if dataList[row] == "地形"{
+            googleMap.mapType = .terrain
+        }else if dataList[row] == "なし"{
+            googleMap.mapType = .none
+        }
+        
+    }
+    
+    @objc func DecideMapView(_ sender:UIButton){
+        // 11->PickerView
+        // 12->DecideButton
+        RemoveObject(Tag: 11)
+        RemoveObject(Tag: 12)
+        self.view.addSubview(DisplayButton)
+    }
+    
+    @objc func DisplayMenu(_ sender:UIButton){
+        // 13->DisplayButton
+        RemoveObject(Tag: 13)
+        self.view.addSubview(DecideButton)
+        self.view.addSubview(PickerView)
+    }
+    
+    func RemoveObject(Tag: Int){
+        if let viewWithTag = self.view.viewWithTag(Tag) {
+            viewWithTag.removeFromSuperview()
         }
     }
     
