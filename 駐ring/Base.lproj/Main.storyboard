@@ -18,11 +18,32 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Khb-Gj-vGr">
-                                <rect key="frame" x="40" y="304" width="295" height="106"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="スクリーンショット 2019-08-06 15.11.05.png" translatesAutoresizingMaskIntoConstraints="NO" id="RdA-ey-3YM">
+                                <rect key="frame" x="-37" y="134" width="448" height="168"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="77"/>
-                                <state key="normal" title="Get"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OC5-I8-f2s">
+                                <rect key="frame" x="344" y="613" width="30" height="42"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <state key="normal" title="�"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Khb-Gj-vGr" customClass="Custom_Button" customModule="駐ring" customModuleProvider="target">
+                                <rect key="frame" x="54" y="527" width="277" height="121"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="74"/>
+                                <state key="normal" title="止めた!">
+                                    <color key="titleColor" red="0.93725490570000003" green="0.93725490570000003" blue="0.95686274770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="20"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="button:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tAA-rs-oEM"/>
                                     <segue destination="YDK-o1-LkP" kind="show" id="46N-bI-2KQ"/>
@@ -35,7 +56,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-716" y="-42"/>
+            <point key="canvasLocation" x="-717.39130434782612" y="-42.391304347826093"/>
         </scene>
         <!--View ControllerA-->
         <scene sceneID="Z4d-Xp-i31">
@@ -45,19 +66,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zTB-YM-37G">
-                                <rect key="frame" x="153.66666666666666" y="664" width="106.99999999999997" height="72"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="50"/>
-                                <state key="normal" title="Back"/>
-                                <connections>
-                                    <action selector="Resetbtn:" destination="YDK-o1-LkP" eventType="touchUpInside" id="fhs-8J-Z4m"/>
-                                    <segue destination="BAn-Wg-OyK" kind="unwind" unwindAction="backWithSegue:" id="r79-Dl-xZr"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dgH-KI-MZP">
-                                <rect key="frame" x="79" y="590" width="256" height="30"/>
+                                <rect key="frame" x="88" y="518" width="213" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="見た目を変える"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="見た目を変える">
+                                    <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
                                 <connections>
                                     <action selector="DisplayButton:" destination="YDK-o1-LkP" eventType="touchUpInside" id="e6Z-XE-mpM"/>
                                 </connections>
@@ -66,11 +81,39 @@
                                 <rect key="frame" x="0.0" y="296" width="414" height="216"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             </pickerView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lPt-sw-VIJ">
+                                <rect key="frame" x="326" y="617" width="30" height="42"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <state key="normal" title="�"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zTB-YM-37G" customClass="Custom_Button" customModule="駐ring" customModuleProvider="target">
+                                <rect key="frame" x="131" y="649" width="152" height="67"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="46"/>
+                                <state key="normal" title="あった!">
+                                    <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="20"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="Resetbtn:" destination="YDK-o1-LkP" eventType="touchUpInside" id="fhs-8J-Z4m"/>
+                                    <segue destination="BAn-Wg-OyK" kind="unwind" unwindAction="backWithSegue:" id="r79-Dl-xZr"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="zTB-YM-37G" firstAttribute="centerX" secondItem="FZM-vR-hZN" secondAttribute="centerX" id="Ejb-2Q-2MA"/>
-                            <constraint firstAttribute="bottom" secondItem="zTB-YM-37G" secondAttribute="bottom" id="Ntv-CJ-Ygl"/>
+                            <constraint firstItem="Z8C-tZ-TWy" firstAttribute="bottom" secondItem="zTB-YM-37G" secondAttribute="bottom" constant="20" id="Fvx-nx-PiJ"/>
+                            <constraint firstItem="zTB-YM-37G" firstAttribute="centerX" secondItem="FZM-vR-hZN" secondAttribute="centerX" id="ZgZ-AJ-iVz"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Z8C-tZ-TWy"/>
                     </view>
@@ -92,14 +135,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Min-MW-Kzp">
-                                <rect key="frame" x="292" y="488" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <connections>
-                                    <action selector="closebtn:" destination="e2p-Gh-IyG" eventType="touchUpInside" id="RoE-vk-kI3"/>
-                                </connections>
-                            </button>
                             <datePicker contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="fDH-ZI-MkP">
                                 <rect key="frame" x="0.0" y="232" width="414" height="216"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
@@ -108,6 +143,25 @@
                                 </date>
                                 <locale key="locale" localeIdentifier="ja_JP"/>
                             </datePicker>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CvR-8q-QzP">
+                                <rect key="frame" x="292" y="526" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1ew-ef-PUS">
+                                <rect key="frame" x="270" y="486" width="79" height="42"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <state key="normal" title="登録🔔"/>
+                                <connections>
+                                    <action selector="closebtn:" destination="e2p-Gh-IyG" eventType="touchUpInside" id="UjW-T9-2w5"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NvE-lt-OcH">
+                                <rect key="frame" x="305" y="602" width="30" height="42"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <state key="normal" title="�"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="vws-05-Drq"/>
@@ -118,7 +172,10 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Q5n-77-NnV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="739" y="-64"/>
+            <point key="canvasLocation" x="737.68115942028987" y="-64.402173913043484"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="スクリーンショット 2019-08-06 15.11.05.png" width="448" height="298"/>
+    </resources>
 </document>

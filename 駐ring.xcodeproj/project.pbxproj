@@ -16,6 +16,8 @@
 		2CE9944522F26FB4007CE385 /* _ringUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE9944422F26FB4007CE385 /* _ringUITests.swift */; };
 		3A53DD4B3EE19EA02BAE2A2E /* Pods__ringTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C56360598AD81C36D259BDFB /* Pods__ringTests.framework */; };
 		973E1B87A9E026EE228BAAF0 /* Pods__ringUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F30DF956C05F8E40C3F16A0 /* Pods__ringUITests.framework */; };
+		B6E4CDA022F95DF000DF5DDE /* スクリーンショット 2019-08-06 15.11.05.png in Resources */ = {isa = PBXBuildFile; fileRef = B6E4CD9F22F95DEF00DF5DDE /* スクリーンショット 2019-08-06 15.11.05.png */; };
+		B6E4CDA222F95E2E00DF5DDE /* Custom_Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E4CDA122F95E2E00DF5DDE /* Custom_Button.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,8 @@
 		5FA545C1E208AD61AB439236 /* Pods-駐ring.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-駐ring.release.xcconfig"; path = "Target Support Files/Pods-駐ring/Pods-駐ring.release.xcconfig"; sourceTree = "<group>"; };
 		6F30DF956C05F8E40C3F16A0 /* Pods__ringUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods__ringUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAE7C2E37346A8DCF86E83EB /* Pods__ring.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods__ring.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6E4CD9F22F95DEF00DF5DDE /* スクリーンショット 2019-08-06 15.11.05.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "スクリーンショット 2019-08-06 15.11.05.png"; sourceTree = "<group>"; };
+		B6E4CDA122F95E2E00DF5DDE /* Custom_Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Custom_Button.swift; sourceTree = "<group>"; };
 		C56360598AD81C36D259BDFB /* Pods__ringTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods__ringTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D39974972FE9A24D8131F676 /* Pods-駐ringUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-駐ringUITests.debug.xcconfig"; path = "Target Support Files/Pods-駐ringUITests/Pods-駐ringUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D83A8756B00F5E08081FF83C /* Pods-駐ring.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-駐ring.debug.xcconfig"; path = "Target Support Files/Pods-駐ring/Pods-駐ring.debug.xcconfig"; sourceTree = "<group>"; };
@@ -115,7 +119,9 @@
 			children = (
 				2CE9942422F26FB2007CE385 /* AppDelegate.swift */,
 				2CE9942622F26FB2007CE385 /* ViewController.swift */,
+				B6E4CD9F22F95DEF00DF5DDE /* スクリーンショット 2019-08-06 15.11.05.png */,
 				2CE9942822F26FB2007CE385 /* Main.storyboard */,
+				B6E4CDA122F95E2E00DF5DDE /* Custom_Button.swift */,
 				2CE9942B22F26FB3007CE385 /* Assets.xcassets */,
 				2CE9942D22F26FB3007CE385 /* LaunchScreen.storyboard */,
 				2CE9943022F26FB3007CE385 /* Info.plist */,
@@ -274,6 +280,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2CE9942F22F26FB3007CE385 /* LaunchScreen.storyboard in Resources */,
+				B6E4CDA022F95DF000DF5DDE /* スクリーンショット 2019-08-06 15.11.05.png in Resources */,
 				2CE9942C22F26FB3007CE385 /* Assets.xcassets in Resources */,
 				2CE9942A22F26FB2007CE385 /* Main.storyboard in Resources */,
 			);
@@ -387,6 +394,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2CE9942722F26FB2007CE385 /* ViewController.swift in Sources */,
+				B6E4CDA222F95E2E00DF5DDE /* Custom_Button.swift in Sources */,
 				2CE9942522F26FB2007CE385 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -564,13 +572,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = YYKHAZLDG7;
+				DEVELOPMENT_TEAM = N474BYSAKD;
 				INFOPLIST_FILE = "駐ring/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = rio.chuing;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chuing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -583,13 +591,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = YYKHAZLDG7;
+				DEVELOPMENT_TEAM = N474BYSAKD;
 				INFOPLIST_FILE = "駐ring/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = rio.chuing;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chuing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
