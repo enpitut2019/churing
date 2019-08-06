@@ -23,8 +23,8 @@ let textFileName1 = "xpoint.txt" //経度記憶用のテキストファイル名
 let textFileName2 = "ypoint.txt" //緯度記憶用のテキストファイル名
 var initialText1 = String("000.0000") //初期テキスト
 var initialText2 = String("000.0000") //初期テキスト
-var contents1 = String("テスト\n用\nテキスト1") //経度表示用のグローバル変数
-var contents2 = String("テスト\n用\nテキスト2") //緯度表示用のグローバル変数
+var contents1 = String("999.0000") //経度表示用のグローバル変数
+var contents2 = String("999.0000") //緯度表示用のグローバル変数
 var point1 = String("point1")
 var point2 = String("point2")
 
@@ -56,6 +56,31 @@ class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
 
     }
   
+    @IBAction func Resetbtn(_ sender: Any) {
+        initialText1 = "999.0000" //初期化テキスト
+        initialText2 = "999.0000" //初期化テキスト
+        // DocumentディレクトリのfileURLを取得
+        if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
+            // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
+            let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
+            let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
+            //  テキストファイルを作成
+            do {
+                try initialText1.write(to: targetTextFilePath1, atomically: true, encoding: String.Encoding.utf8) //経度を書き込み（上書き）
+                try initialText2.write(to: targetTextFilePath2, atomically: true, encoding: String.Encoding.utf8) //緯度を書き込み（上書き）
+                //  テキストファイルを読み込む
+                do {
+                    contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
+                    contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
+                } catch let error as NSError {
+                    print("failed to read: \(error)") //例外処理
+                }
+            } catch let error as NSError {
+                print("failed to write: \(error)") //例外処理
+            }
+        }
+    }
+    
     let dataList = ["通常", "航空写真", "ハイブリット", "地形", "なし"]
     
     // グーグルマップの設定をする変数
@@ -69,18 +94,8 @@ class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         // Delegate設定
         PickerView.delegate = self
         PickerView.dataSource = self
-    
-        if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
-            // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
-            let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
-            let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
-            do {
-                contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8)
-                contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8)
-            } catch let error as NSError {
-                print("failed to read: \(error)") //例外処理
-            }
-        }
+        
+        reading()
         
         let latitude = atof(contents1)
         let longitude = atof(contents2)
@@ -144,79 +159,25 @@ class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         return googleMap
     }
     
+    func reading(){
+        if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
+            // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
+            let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
+            let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
+            //  テキストファイルを読み込む（デバッグ用）
+            do {
+                contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
+                contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
+            } catch let error as NSError {
+                print("failed to read: \(error)") //例外処理
+            }
+        }
+    }
 }
 
 class ViewController: UIViewController {
     
-    @IBOutlet weak var tt: UILabel!
     
-    @IBAction func btntap(_ sender: Any) {
-        picker.isHidden = false
-        closebtn.isHidden = false
-        
-    }
-    
-    @IBAction func closebtn(_ sender: Any) {
-        closebtn.isHidden = true
-        picker.isHidden = true
-        
-        // 通知許可ダイアログを表示
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) {
-            (granted, error) in
-            // エラー処理
-        }
-        
-        // 通知内容の設定
-        let content = UNMutableNotificationContent()
-        
-        content.title = NSString.localizedUserNotificationString(forKey: "駐ring", arguments: nil)
-        content.body = NSString.localizedUserNotificationString(forKey: "おーーい！！そこの君！！！もうすぐ自転車に乗る時間だよ！忘れてたでしょ？絶対そうだと思ったよ。もうほんとに感謝してくれよな（ ｉ _ ｉ ）", arguments: nil)
-        content.sound = UNNotificationSound.default
-        
-        
-        // 日付のフォーマット
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yy"
-        year = "20"+"\(formatter.string(from: picker.date))"
-        formatter.dateFormat = "MM"
-        month = "\(formatter.string(from: picker.date))"
-        formatter.dateFormat = "dd"
-        day = "\(formatter.string(from: picker.date))"
-        formatter.dateFormat = "HH"
-        hour = "\(formatter.string(from: picker.date))"
-        formatter.dateFormat = "mm"
-        minute = "\(formatter.string(from: picker.date))"
-        formatter.dateFormat = "ss"
-        second = "\(formatter.string(from: picker.date))"
-        text = year + "年" + month + "月" + day + "日" + hour + "時" + minute + "分"
-     
-        
-        var myDateComponents = DateComponents()
-        
-        myDateComponents.year = Int(year)
-        myDateComponents.month = Int(month)
-        myDateComponents.day = Int(day)
-        myDateComponents.hour = Int(hour)
-        myDateComponents.minute = Int(minute)
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: myDateComponents, repeats: false)
-        
-        let request = UNNotificationRequest(identifier: " Identifier", content: content, trigger: trigger)
-        
-        // 通知を登録
-        center.add(request) { (error : Error?) in
-            if error != nil {
-                // エラー処理
-            }
-        }
-        tt.text = "通知設定時刻: " + text
-        
-    }
-    
-    @IBOutlet weak var picker: UIDatePicker!
-    
-    @IBOutlet weak var closebtn: UIButton!
     
     // グーグルマップの設定をする変数
     var googleMap : GMSMapView!
@@ -244,7 +205,38 @@ class ViewController: UIViewController {
         // CLLocationManagerDelegateプロトコルを実装するクラスを指定する
         locationManager.delegate = self
         
-
+        // DocumentディレクトリのfileURLを取得
+        if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
+            // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
+            let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
+            let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
+            
+            //  テキストファイルを読み込む
+            do {
+                contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
+                contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
+            } catch let error as NSError {
+                print("failed to read: \(error)") //例外処理
+            }
+        }
+        
+        // 正規の座標を取得している時
+        if atof(contents1) != 999 {
+            Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(ViewController.change_map), userInfo: nil, repeats: false)
+        }
+    }
+    
+    @objc func change_map(){
+        
+        change_segue(move: "second")
+        
+    }
+    
+    
+    func change_segue(move: String){
+        let storyboard: UIStoryboard = self.storyboard!
+        let second = storyboard.instantiateViewController(withIdentifier: move)
+        self.present(second, animated: false, completion:nil )
     }
     
     override func didReceiveMemoryWarning() {
@@ -263,55 +255,38 @@ class ViewController: UIViewController {
         initialText1 = point1 //経度用
         initialText2 = point2 //緯度用
         
-        // DocumentディレクトリのfileURLを取得
+        writing(text1: initialText1, text2: initialText2)
+        
+        alert()
+        
+        
+    }
+    
+    func reading(){
         if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
             // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
             let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
             let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
-            //  テキストファイルを作成
+            //  テキストファイルを読み込む（デバッグ用）
             do {
-                try initialText1.write(to: targetTextFilePath1, atomically: true, encoding: String.Encoding.utf8) //経度を書き込み（上書き）
-                try initialText2.write(to: targetTextFilePath2, atomically: true, encoding: String.Encoding.utf8) //緯度を書き込み（上書き）
-                //  テキストファイルを読み込む（デバッグ用）
-                do {
-                    contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
-                    contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
-                } catch let error as NSError {
-                    print("failed to read: \(error)") //例外処理
-                }
+                contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
+                contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
             } catch let error as NSError {
-                print("failed to write: \(error)") //例外処理
+                print("failed to read: \(error)") //例外処理
             }
         }
     }
     
-    //  「位置を表示」ボタンに対応
-    @IBAction func hyouzi(_ sender: Any) {
-        content.text = "経度：" + contents1 //経度を表示
-        content2.text = "経度：" + contents2 //緯度を表示
-    }
-    
-    //  「リセット」ボタンに対応
-    @IBAction func reset(_ sender: Any) {
-        initialText1 = "999.0000" //初期化テキスト
-        initialText2 = "999.0000" //初期化テキスト
-        // DocumentディレクトリのfileURLを取得
+    func writing(text1: String, text2: String){
         if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
             // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
             let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
             let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
             //  テキストファイルを作成
             do {
-                try initialText1.write(to: targetTextFilePath1, atomically: true, encoding: String.Encoding.utf8) //経度を書き込み（上書き）
-                try initialText2.write(to: targetTextFilePath2, atomically: true, encoding: String.Encoding.utf8) //緯度を書き込み（上書き）
-                //  テキストファイルを読み込む
-                do {
-                    contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
-                    contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
-                } catch let error as NSError {
-                    print("failed to read: \(error)") //例外処理
-                }
-            } catch let error as NSError {
+                try text1.write(to: targetTextFilePath1, atomically: true, encoding: String.Encoding.utf8) //経度を書き込み（上書き）
+                try text2.write(to: targetTextFilePath2, atomically: true, encoding: String.Encoding.utf8) //緯度を書き込み（上書き）
+            }catch let error as NSError {
                 print("failed to write: \(error)") //例外処理
             }
         }
@@ -322,7 +297,7 @@ class ViewController: UIViewController {
             //まずは、同じstororyboard内であることをここで定義します
             let storyboard: UIStoryboard = self.storyboard!
             //ここで移動先のstoryboardを選択(今回の場合は先ほどsecondと名付けたのでそれを書きます)
-            let second = storyboard.instantiateViewController(withIdentifier: "map")
+            let second = storyboard.instantiateViewController(withIdentifier: "second")
             //ここが実際に移動するコードとなります
             self.present(second, animated: true, completion: nil)
         }
@@ -335,6 +310,7 @@ class ViewController: UIViewController {
     func CGRectMake(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat) -> CGRect {
         return CGRect(x: x, y: y, width: width, height: height)
     }
+
     
 }
 
@@ -385,6 +361,92 @@ extension ViewController: CLLocationManagerDelegate {
         
     }
     
-    
+    func alert(){
+        let alui = UIAlertController(title: "通知設定", message: "通知するようにしますか?", preferredStyle: UIAlertController.Style.alert)
+        let btn_yes = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default, handler:
+        {
+            (action: UIAlertAction!) in
+            self.change_segue(move: "alert")
+        }
+        )
+        let btn_no = UIAlertAction(title: "No", style: UIAlertAction.Style.default, handler:
+        {
+            (action: UIAlertAction!) in
+            self.change_segue(move: "second")
+        }
+        )
+        alui.addAction(btn_no)
+        alui.addAction(btn_yes)
+        
+        present(alui, animated: true, completion: nil)
+    }
 }
 
+class AlertViewController: UIViewController{
+    
+    @IBOutlet weak var picker: UIDatePicker!
+    
+    override func viewDidLoad() {
+        // スーパークラス
+        super.viewDidLoad()
+        
+    }
+    
+    @IBAction func closebtn(_ sender: Any) {
+        // 通知許可ダイアログを表示
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) {
+            (granted, error) in
+            // エラー処理
+        }
+        // 通知内容の設定
+        let content = UNMutableNotificationContent()
+        
+        content.title = NSString.localizedUserNotificationString(forKey: "駐ring", arguments: nil)
+        content.body = NSString.localizedUserNotificationString(forKey: "おーーい！！そこの君！！！もうすぐ自転車に乗る時間だよ！忘れてたでしょ？絶対そうだと思ったよ。もうほんとに感謝してくれよな（ ｉ _ ｉ ）", arguments: nil)
+        content.sound = UNNotificationSound.default
+        // 日付のフォーマット
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yy"
+        year = "20"+"\(formatter.string(from: picker.date))"
+        formatter.dateFormat = "MM"
+        month = "\(formatter.string(from: picker.date))"
+        formatter.dateFormat = "dd"
+        day = "\(formatter.string(from: picker.date))"
+        formatter.dateFormat = "HH"
+        hour = "\(formatter.string(from: picker.date))"
+        formatter.dateFormat = "mm"
+        minute = "\(formatter.string(from: picker.date))"
+        formatter.dateFormat = "ss"
+        second = "\(formatter.string(from: picker.date))"
+        text = year + "年" + month + "月" + day + "日" + hour + "時" + minute + "分"
+        
+        //
+        var myDateComponents = DateComponents()
+        
+        myDateComponents.year = Int(year)
+        myDateComponents.month = Int(month)
+        myDateComponents.day = Int(day)
+        myDateComponents.hour = Int(hour)
+        myDateComponents.minute = Int(minute)
+        //
+        let trigger = UNCalendarNotificationTrigger(dateMatching: myDateComponents, repeats: false)
+        //
+        let request = UNNotificationRequest(identifier: " Identifier", content: content, trigger: trigger)
+        //
+        // 通知を登録
+        center.add(request) { (error : Error?) in
+            if error != nil {
+                // エラー処理
+            }
+        }
+        
+        change_segue(move: "second")
+    }
+    
+    func change_segue(move: String){
+        let storyboard: UIStoryboard = self.storyboard!
+        let second = storyboard.instantiateViewController(withIdentifier: move)
+        self.present(second, animated: false, completion:nil )
+    }
+}
