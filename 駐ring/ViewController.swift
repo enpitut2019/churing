@@ -403,6 +403,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
                 fastcnt = 0
             } else if distance < 22.5 {
                 endcnt += 1
+                if fastcnt > 0 {
+                    fastcnt -= 1
+                }
             } else {
                 if fastcnt > 30 {
                     endcnt = 0
