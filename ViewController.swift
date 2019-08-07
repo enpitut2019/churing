@@ -34,16 +34,6 @@ var fastcnt = -10 // 自転車以上の速度で移動した時間
 var pointsx:[Double] = [0,1,2,3,4,5,6,7,8,9,10] // 緯度を記録するための配列
 var pointsy:[Double] = [0,1,2,3,4,5,6,7,8,9,10] // 経度を記録するための配列
 var distance = 0.0 // 座標２点間の距離
-var modepara = 1 // 0の時は「Manuel」、1の時は「Auto」。今はデバッグ中なので1
-var getmess = "どこ？" // 「取得」ボタンに表示する文字列
-var backmess = "戻る" // 「戻る」ボタンに表示する文字列
-var modemess = "Auto" // 「モード表示」用の文字列Auto
-/*
-var getmess = "止めた" // 「取得」ボタンに表示する文字列
-var backmess = "あった!" // 「戻る」ボタンに表示する文字列
-var modemess = "Manuel" // 「モード表示」用の文字列
- */
-
 
 //通知用オブジェクト
 var year:String = ""
@@ -65,7 +55,7 @@ func readingf(){
         do {
             contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
             contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
-            print("ファイルを読み込みました。contents1=\(contents1), contents2=\(contents2)")
+            print("reading")
         } catch let error as NSError {
             print("failed to read: \(error)") //例外処理
         }
@@ -81,7 +71,7 @@ func writingf(text1: String, text2: String){
         do {
             try text1.write(to: targetTextFilePath1, atomically: true, encoding: String.Encoding.utf8) //経度を書き込み（上書き）
             try text2.write(to: targetTextFilePath2, atomically: true, encoding: String.Encoding.utf8) //緯度を書き込み（上書き）
-            print("ファイルに書き込みました。contents1=\(text1), contents2=\(text2)")
+            print("writing")
         }catch let error as NSError {
             print("failed to write: \(error)") //例外処理
         }
@@ -107,15 +97,11 @@ class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     }
   
     @IBAction func Resetbtn(_ sender: Any) {
-        if modepara == 0 {
-            initialText1 = "999.0000" //初期化テキスト
-            initialText2 = "999.0000" //初期化テキスト
-            writingf(text1: initialText1, text2: initialText2)
-            readingf()
-            print("データを初期化しました。")
-        }
+        initialText1 = "999.0000" //初期化テキスト
+        initialText2 = "999.0000" //初期化テキスト
+        writingf(text1: initialText1, text2: initialText2)
+        readingf()
     }
-    @IBOutlet weak var backbutton: UIButton!
     
     let dataList = ["通常", "航空写真", "ハイブリット", "地形", "なし"]
     
@@ -132,7 +118,6 @@ class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         PickerView.dataSource = self
         
         readingf()
-        backbutton.setTitle(backmess, for: .normal)
         
         let latitude = atof(contents1)
         let longitude = atof(contents2)
@@ -224,7 +209,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
         
         // 正規の座標を取得している時
         readingf()
+        print("test = \(contents1)")
         if atof(contents1) != 999 {
+            print("OK")
             Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(ViewController.change_map), userInfo: nil, repeats: false)
         }
         
@@ -256,36 +243,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
             print("常に許可している");
             locationManager.startUpdatingLocation()
         }
-        modelabel.text = modemess
     }
     
-    @IBOutlet weak var modelabel: UILabel!
     @objc func change_map(){
         // 地図の画面へ移動
         change_segue(move: "second")
     }
     
-    // モード切り替え
-    @IBOutlet weak var getbutton: UIButton!
-    @IBAction func switchChange(_ sender: UISwitch) {
-        if sender.isOn == true {
-            modepara = 1
-            getmess = "どこ？"
-            backmess = "戻る"
-            modemess = "Auto"
-            getbutton.setTitle(getmess, for: .normal)
-            modelabel.text = modemess
-            print("mode:Auto")
-        } else {
-            modepara = 0
-            getmess = "駐めた!"
-            backmess = "あった!"
-            modemess = "Manual"
-            getbutton.setTitle(getmess, for: .normal)
-            modelabel.text = modemess
-            print("mode:Manu")
-        }
-    }
     
     func change_segue(move: String){
         let storyboard: UIStoryboard = self.storyboard!
@@ -305,13 +269,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
     
     //  「位置を登録」ボタンに対応
     @IBAction func button(_ sender: Any) {
-        if modepara == 0 {
-            // 書き込み用の座標を格納
-            initialText1 = point1 //経度用
-            initialText2 = point2 //緯度用
-            writingf(text1: initialText1, text2: initialText2)
-            
-            alert()
+        // 書き込み用の座標を格納
+        initialText1 = point1 //経度用
+        initialText2 = point2 //緯度用
+        writingf(text1: initialText1, text2: initialText2)
+        
+        alert()
+    }
+    
+    
+    
+    @IBAction func review(_ sender: Any) {
+        if atof(contents1) != 999 {
+            //まずは、同じstororyboard内であることをここで定義します
+            let storyboard: UIStoryboard = self.storyboard!
+            //ここで移動先のstoryboardを選択(今回の場合は先ほどsecondと名付けたのでそれを書きます)
+            let second = storyboard.instantiateViewController(withIdentifier: "second")
+            //ここが実際に移動するコードとなります
+            self.present(second, animated: true, completion: nil)
         }
     }
     
@@ -349,67 +324,63 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
     
     // 位置情報が取得されると呼ばれる
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if modepara == 1 {
-            // 最新の位置情報を取得 locationsに配列で入っている位置情報の最後が最新となる
-            let location : CLLocation = locations.last!
-            point1 = "\(location.coordinate.latitude)"
-            point2 = "\(location.coordinate.longitude)"
-            count += 1
-            // 配列の処理
-            pointsx.append(atof(point1))
-            pointsx.removeFirst()
-            pointsy.append(atof(point2))
-            pointsy.removeFirst()
-            // 緯度経度をラジアンに変換
-            let currentLa   = (pointsx.first!+pointsx[1]+pointsx[2])/3 * Double.pi / 180
-            let currentLo   = (pointsy.first!+pointsy[1]+pointsy[2])/3 * Double.pi / 180
-            let targetLa    = (pointsx.last!+pointsx[9]+pointsx[8])/3 * Double.pi / 180
-            let targetLo    = (pointsy.last!+pointsy[9]+pointsy[8])/3 * Double.pi / 180
-            point1 = String(pointsx[9])
-            point2 = String(pointsy[9])
-            // 緯度差
-            let radLatDiff = currentLa - targetLa
-            // 経度差算
-            let radLonDiff = currentLo - targetLo
-            // 平均緯度
-            let radLatAve = (currentLa + targetLa) / 2.0
-            // 測地系による値の違い
-            // 赤道半径
-            // let a = 6378137.0  world
-            let a = 6377397.155 // japan
-            // 極半径
-            // let b = 6356752.314140356 world
-            let b = 6356078.963 // japan
-            // 第一離心率^2
-            let e2 = (a * a - b * b) / (a * a)
-            // 赤道上の子午線曲率半径
-            let a1e2 = a * (1 - e2)
-            let sinLat = sin(radLatAve);
-            let w2 = 1.0 - e2 * (sinLat * sinLat);
-            // 子午線曲率半径m
-            let m = a1e2 / (sqrt(w2) * w2);
-            // 卯酉線曲率半径 n
-            let n = a / sqrt(w2)
-            // 算出
-            let t1 = m * radLatDiff
-            let t2 = n * cos(radLatAve) * radLonDiff
-            distance = sqrt((t1 * t1) + (t2 * t2))
-            
-            print("d=\(distance) || c=\(count) e=\(endcnt) f=\(fastcnt) s=\(stopcnt)")
-            // DocumentディレクトリのfileURLを取得
-            if distance < 6 && endcnt < 10 && stopcnt == 0 {
-                writingf(text1: point1, text2: point2)
-                readingf()
-                fastcnt = 0
-            } else if distance < 22.5 {
-                endcnt += 1
-            } else {
-                if fastcnt > 30 {
-                    endcnt = 0
-                    stopcnt = 0
-                }
-                fastcnt += 1
+        // 最新の位置情報を取得 locationsに配列で入っている位置情報の最後が最新となる
+        let location : CLLocation = locations.last!;
+        point1 = "\(location.coordinate.latitude)"
+        point2 = "\(location.coordinate.longitude)"
+        count += 1
+        // 配列の処理
+        pointsx.append(atof(point1))
+        pointsx.removeFirst()
+        pointsy.append(atof(point2))
+        pointsy.removeFirst()
+        // 緯度経度をラジアンに変換
+        let currentLa   = (pointsx.first!+pointsx[1]+pointsx[2])/3 * Double.pi / 180
+        let currentLo   = (pointsy.first!+pointsy[1]+pointsy[2])/3 * Double.pi / 180
+        let targetLa    = (pointsx.last!+pointsx[9]+pointsx[8])/3 * Double.pi / 180
+        let targetLo    = (pointsy.last!+pointsy[9]+pointsy[8])/3 * Double.pi / 180
+        // 緯度差
+        let radLatDiff = currentLa - targetLa
+        // 経度差算
+        let radLonDiff = currentLo - targetLo
+        // 平均緯度
+        let radLatAve = (currentLa + targetLa) / 2.0
+        // 測地系による値の違い
+        // 赤道半径
+        // let a = 6378137.0  world
+        let a = 6377397.155 // japan
+        // 極半径
+        // let b = 6356752.314140356 world
+        let b = 6356078.963 // japan
+        // 第一離心率^2
+        let e2 = (a * a - b * b) / (a * a)
+        // 赤道上の子午線曲率半径
+        let a1e2 = a * (1 - e2)
+        let sinLat = sin(radLatAve);
+        let w2 = 1.0 - e2 * (sinLat * sinLat);
+        // 子午線曲率半径m
+        let m = a1e2 / (sqrt(w2) * w2);
+        // 卯酉線曲率半径 n
+        let n = a / sqrt(w2)
+        // 算出
+        let t1 = m * radLatDiff
+        let t2 = n * cos(radLatAve) * radLonDiff
+        distance = sqrt((t1 * t1) + (t2 * t2))
+        
+        //print("d=\(distance) || c=\(count) e=\(endcnt) f=\(fastcnt) s=\(stopcnt)")
+        // DocumentディレクトリのfileURLを取得
+        if distance < 6 && endcnt < 10 && stopcnt == 0 {
+            writingf(text1: point1, text2: point2)
+            readingf()
+            fastcnt = 0
+        } else if distance < 22.5 {
+            endcnt += 1
+        } else {
+            if fastcnt > 10 {
+                endcnt = 0
+                stopcnt = 0
             }
+            fastcnt += 1
         }
     }
     // 位置情報の取得に失敗すると呼ばれる

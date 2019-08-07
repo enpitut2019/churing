@@ -243,6 +243,11 @@
 				TargetAttributes = {
 					2CE9942022F26FB2007CE385 = {
 						CreatedOnToolsVersion = 10.3;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					2CE9943422F26FB3007CE385 = {
 						CreatedOnToolsVersion = 10.3;
@@ -572,13 +577,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = N474BYSAKD;
+				DEVELOPMENT_TEAM = 65K3ML6B2T;
 				INFOPLIST_FILE = "駐ring/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.chuing;
+				PRODUCT_BUNDLE_IDENTIFIER = churing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -591,13 +596,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = N474BYSAKD;
+				DEVELOPMENT_TEAM = 65K3ML6B2T;
 				INFOPLIST_FILE = "駐ring/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.chuing;
+				PRODUCT_BUNDLE_IDENTIFIER = churing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
