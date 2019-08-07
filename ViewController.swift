@@ -23,18 +23,10 @@ let textFileName1 = "xpoint.txt" //経度記憶用のテキストファイル名
 let textFileName2 = "ypoint.txt" //緯度記憶用のテキストファイル名
 var initialText1 = String("000.0000") //初期テキスト
 var initialText2 = String("000.0000") //初期テキスト
-var contents1 = String("000.0000") //経度表示用のグローバル変数
-var contents2 = String("000.0000") //緯度表示用のグローバル変数
+var contents1 = String("999.0000") //経度表示用のグローバル変数
+var contents2 = String("999.0000") //緯度表示用のグローバル変数
 var point1 = String("point1")
 var point2 = String("point2")
-var count = 0 // バックグラウンド取得が行われた数
-var stopcnt = 1 // 止まっている状態から再起動した時にその場を取得しないようにするためのフラグ
-var endcnt = 0 // 自転車を止めた時に歩いたと予想される時間
-var fastcnt = -10 // 自転車以上の速度で移動した時間
-var pointsx:[Double] = [0,1,2,3,4,5,6,7,8,9,10] // 緯度を記録するための配列
-var pointsy:[Double] = [0,1,2,3,4,5,6,7,8,9,10] // 経度を記録するための配列
-var distance = 0.0 // 座標２点間の距離
-var switchpara = 0 // 1にすると自動化機能がオミットされる
 
 //通知用オブジェクト
 var year:String = ""
@@ -46,42 +38,9 @@ var second:String = ""
 var pm:String = ""
 var text:String = ""
 
-// ファイル読み取り用のグローバル関数
-func readingf(){
-    if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
-        // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
-        let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
-        let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
-        //  テキストファイルを読み込む（デバッグ用）
-        do {
-            contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
-            contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
-            print("reading")
-        } catch let error as NSError {
-            print("failed to read: \(error)") //例外処理
-        }
-    }
-}
-
-// ファイル書き込み用のグローバル関数
-func writingf(text1: String, text2: String){
-    if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
-        // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
-        let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
-        let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
-        //  テキストファイルを作成
-        do {
-            try text1.write(to: targetTextFilePath1, atomically: true, encoding: String.Encoding.utf8) //経度を書き込み（上書き）
-            try text2.write(to: targetTextFilePath2, atomically: true, encoding: String.Encoding.utf8) //緯度を書き込み（上書き）
-            print("writing")
-        }catch let error as NSError {
-            print("failed to write: \(error)") //例外処理
-        }
-    }
-}
-
 
 class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+    
     //地図の表示切替用の変数群
     @IBOutlet weak var PickerView: UIPickerView!
     @IBOutlet weak var displaybutton: UIButton!
@@ -96,16 +55,32 @@ class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         }
 
     }
-    
-    // 「戻る」ボタンに対応（取得情報リセット機能付き）
+  
     @IBAction func Resetbtn(_ sender: Any) {
         initialText1 = "999.0000" //初期化テキスト
         initialText2 = "999.0000" //初期化テキスト
-        writingf(text1: initialText1, text2: initialText2)
-        readingf()
+        // DocumentディレクトリのfileURLを取得
+        if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
+            // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
+            let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
+            let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
+            //  テキストファイルを作成
+            do {
+                try initialText1.write(to: targetTextFilePath1, atomically: true, encoding: String.Encoding.utf8) //経度を書き込み（上書き）
+                try initialText2.write(to: targetTextFilePath2, atomically: true, encoding: String.Encoding.utf8) //緯度を書き込み（上書き）
+                //  テキストファイルを読み込む
+                do {
+                    contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
+                    contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
+                } catch let error as NSError {
+                    print("failed to read: \(error)") //例外処理
+                }
+            } catch let error as NSError {
+                print("failed to write: \(error)") //例外処理
+            }
+        }
     }
     
-    // 地図表示の種類
     let dataList = ["通常", "航空写真", "ハイブリット", "地形", "なし"]
     
     // グーグルマップの設定をする変数
@@ -119,12 +94,13 @@ class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         // Delegate設定
         PickerView.delegate = self
         PickerView.dataSource = self
-        // ファイル読み込み
-        readingf()
-        // 地図表示
+        
+        reading()
+        
         let latitude = atof(contents1)
         let longitude = atof(contents2)
         self.view.addSubview(MakeMap(state: .normal, latitude: latitude, longitude: longitude, zoom: 18.25, width: self.view.bounds.width, height: self.view.bounds.height/2))
+        
     }
     
     //PickerViewに必要な関数
@@ -162,6 +138,7 @@ class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
     }
     
+    
     func CGRectMake(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat) -> CGRect {
         return CGRect(x: x, y: y, width: width, height: height)
     }
@@ -182,14 +159,33 @@ class ViewControllerA: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         return googleMap
     }
     
+    func reading(){
+        if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
+            // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
+            let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
+            let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
+            //  テキストファイルを読み込む（デバッグ用）
+            do {
+                contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
+                contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
+            } catch let error as NSError {
+                print("failed to read: \(error)") //例外処理
+            }
+        }
+    }
 }
 
-
-class ViewController: UIViewController, CLLocationManagerDelegate  {
+class ViewController: UIViewController {
+    
+    
+    
     // グーグルマップの設定をする変数
     var googleMap : GMSMapView!
     
-    //エラー用の座標
+    //緯度経度 -> 足利市駅
+    var latitude2: CLLocationDegrees = 36.32913
+    var longitude2: CLLocationDegrees = 139.44827
+    
     let latitude: CLLocationDegrees = 35.681541
     let longitude: CLLocationDegrees = 139.767136
     
@@ -197,6 +193,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
     
     // 位置情報取得のための変数
     var locationManager: CLLocationManager!
+    //@IBOutlet weak var 取得時刻: UILabel!
     
     // 起動時に実行される関数
     override func viewDidLoad() {
@@ -207,48 +204,35 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
         locationManager = CLLocationManager()
         // CLLocationManagerDelegateプロトコルを実装するクラスを指定する
         locationManager.delegate = self
+        
+        // DocumentディレクトリのfileURLを取得
+        if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
+            // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
+            let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
+            let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
+            
+            //  テキストファイルを読み込む
+            do {
+                contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
+                contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
+            } catch let error as NSError {
+                print("failed to read: \(error)") //例外処理
+            }
+        }
+        
         // 正規の座標を取得している時
-        readingf()
         if atof(contents1) != 999 {
-            print("OK")
             Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(ViewController.change_map), userInfo: nil, repeats: false)
-        }
-        // バックグラウンド処理で位置情報を取得するための下準備
-        locationManager = CLLocationManager.init()
-        locationManager.allowsBackgroundLocationUpdates = true; // バックグランドモードで使用する場合YESにする必要がある
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest; // 位置情報取得の精度
-        //locationManager.activityType = .automotiveNavigation
-        locationManager.distanceFilter = -1; // 位置情報取得する間隔、1m単位とする
-        locationManager.delegate = self as CLLocationManagerDelegate
-        // 位置情報の認証チェック
-        let status = CLLocationManager.authorizationStatus()
-        if (status == .notDetermined) {
-            print("許可、不許可を選択してない");
-            // 常に許可するように求める
-            locationManager.requestAlwaysAuthorization();
-        }
-        else if (status == .restricted) {
-            print("機能制限している")
-        }
-        else if (status == .denied) {
-            print("許可していない")
-        }
-        else if (status == .authorizedWhenInUse) {
-            print("このアプリ使用中のみ許可している");
-            locationManager.startUpdatingLocation()
-        }
-        else if (status == .authorizedAlways) {
-            print("常に許可している");
-            locationManager.startUpdatingLocation()
         }
     }
     
     @objc func change_map(){
-        // 地図の画面へ移動
+        
         change_segue(move: "second")
+        
     }
     
-    // 地図へ画面遷移
+    
     func change_segue(move: String){
         let storyboard: UIStoryboard = self.storyboard!
         let second = storyboard.instantiateViewController(withIdentifier: move)
@@ -260,17 +244,54 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
         // Dispose of any resources that can be recreated.
     }
     
+    //  「経度」ラベルに対応
+    @IBOutlet weak var content: UILabel!
+    //  「緯度」ラベルに対応
+    @IBOutlet weak var content2: UILabel!
+    
     //  「位置を登録」ボタンに対応
     @IBAction func button(_ sender: Any) {
-        // 書き込み用の座標を格納
+        // 表示テスト用の乱数を生成
         initialText1 = point1 //経度用
         initialText2 = point2 //緯度用
-        writingf(text1: initialText1, text2: initialText2)
+        
+        writing(text1: initialText1, text2: initialText2)
         
         alert()
+        
+        
     }
     
-    // 正規の座標を取得していなければ「Print」ボタンをさわれない
+    func reading(){
+        if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
+            // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
+            let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
+            let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
+            //  テキストファイルを読み込む（デバッグ用）
+            do {
+                contents1 = try String(contentsOf: targetTextFilePath1, encoding: String.Encoding.utf8) //経度用のテキストファイルから経度を読み取る
+                contents2 = try String(contentsOf: targetTextFilePath2, encoding: String.Encoding.utf8) //緯度用のテキストファイルから緯度を読み取る
+            } catch let error as NSError {
+                print("failed to read: \(error)") //例外処理
+            }
+        }
+    }
+    
+    func writing(text1: String, text2: String){
+        if let documentDirectoryFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last {
+            // ディレクトリのパスにファイル名をつなげてファイルのフルパスを作る
+            let targetTextFilePath1 = documentDirectoryFileURL.appendingPathComponent(textFileName1) //経度用
+            let targetTextFilePath2 = documentDirectoryFileURL.appendingPathComponent(textFileName2) //緯度用
+            //  テキストファイルを作成
+            do {
+                try text1.write(to: targetTextFilePath1, atomically: true, encoding: String.Encoding.utf8) //経度を書き込み（上書き）
+                try text2.write(to: targetTextFilePath2, atomically: true, encoding: String.Encoding.utf8) //緯度を書き込み（上書き）
+            }catch let error as NSError {
+                print("failed to write: \(error)") //例外処理
+            }
+        }
+    }
+    
     @IBAction func review(_ sender: Any) {
         if atof(contents1) != 999 {
             //まずは、同じstororyboard内であることをここで定義します
@@ -282,22 +303,64 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
         }
     }
     
-    // ???
     @IBAction func watch_map(_ sender: UIButton) {
         self.view.addSubview(googleMap)
     }
-    
     //このバージョンではCGRectMakeが使えないためWrapする関数を作成して回避する。
     func CGRectMake(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat) -> CGRect {
         return CGRect(x: x, y: y, width: width, height: height)
     }
+
     
-    // 「戻る」ボタン（というか「Exit」に対応）
+}
+
+// 位置情報取得のための
+extension ViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+        case .notDetermined:
+            print("ユーザーはこのアプリケーションに関してまだ選択を行っていません")
+            locationManager.requestWhenInUseAuthorization()
+            break
+        case .denied:
+            print("ローケーションサービスの設定が「無効」になっています (ユーザーによって、明示的に拒否されています）")
+            // 「設定 > プライバシー > 位置情報サービス で、位置情報サービスの利用を許可して下さい」を表示する
+            break
+        case .restricted:
+            print("このアプリケーションは位置情報サービスを使用できません(ユーザによって拒否されたわけではありません)")
+            // 「このアプリは、位置情報を取得できないために、正常に動作できません」を表示する
+            break
+        case .authorizedAlways:
+            print("常時、位置情報の取得が許可されています。")
+            // 位置情報取得の開始処理
+            break
+        case .authorizedWhenInUse:
+            print("起動時のみ、位置情報の取得が許可されています。")
+            // 位置情報取得の開始処理
+            locationManager.startUpdatingLocation()
+            break
+        @unknown default:
+            break
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        for location in locations {
+            point1 = "\(location.coordinate.latitude)"
+            point2 = "\(location.coordinate.longitude)"
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("位置情報の取得に失敗しました")
+    }
+    
+    // 画面遷移
     @IBAction func back(segue: UIStoryboardSegue) {
         
     }
     
-    // 通知アラート
     func alert(){
         let alui = UIAlertController(title: "通知設定", message: "通知するようにしますか?", preferredStyle: UIAlertController.Style.alert)
         let btn_yes = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default, handler:
@@ -317,96 +380,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
         
         present(alui, animated: true, completion: nil)
     }
-    
-    // 位置情報が取得されると呼ばれる
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if switchpara == 0 {
-            // 最新の位置情報を取得 locationsに配列で入っている位置情報の最後が最新となる
-            let location : CLLocation = locations.last!;
-            point1 = "\(location.coordinate.latitude)"
-            point2 = "\(location.coordinate.longitude)"
-            count += 1
-            // 配列の処理
-            pointsx.append(atof(point1))
-            pointsx.removeFirst()
-            pointsy.append(atof(point2))
-            pointsy.removeFirst()
-            // 緯度経度をラジアンに変換
-            let currentLa   = (pointsx.first!+pointsx[1]+pointsx[2])/3 * Double.pi / 180
-            let currentLo   = (pointsy.first!+pointsy[1]+pointsy[2])/3 * Double.pi / 180
-            let targetLa    = (pointsx.last!+pointsx[9]+pointsx[8])/3 * Double.pi / 180
-            let targetLo    = (pointsy.last!+pointsy[9]+pointsy[8])/3 * Double.pi / 180
-            // 緯度差
-            let radLatDiff = currentLa - targetLa
-            // 経度差算
-            let radLonDiff = currentLo - targetLo
-            // 平均緯度
-            let radLatAve = (currentLa + targetLa) / 2.0
-            // 測地系による値の違い
-            // 赤道半径
-            // let a = 6378137.0  world
-            let a = 6377397.155 // japan
-            // 極半径
-            // let b = 6356752.314140356 world
-            let b = 6356078.963 // japan
-            // 第一離心率^2
-            let e2 = (a * a - b * b) / (a * a)
-            // 赤道上の子午線曲率半径
-            let a1e2 = a * (1 - e2)
-            let sinLat = sin(radLatAve);
-            let w2 = 1.0 - e2 * (sinLat * sinLat);
-            // 子午線曲率半径m
-            let m = a1e2 / (sqrt(w2) * w2);
-            // 卯酉線曲率半径 n
-            let n = a / sqrt(w2)
-            // 算出
-            let t1 = m * radLatDiff
-            let t2 = n * cos(radLatAve) * radLonDiff
-            distance = sqrt((t1 * t1) + (t2 * t2))
-            
-            //print("d=\(distance) || c=\(count) e=\(endcnt) f=\(fastcnt) s=\(stopcnt)")
-            // DocumentディレクトリのfileURLを取得
-            if distance < 6 && endcnt < 10 && stopcnt == 0 {
-                writingf(text1: point1, text2: point2)
-                readingf()
-                fastcnt = 0
-            } else if distance < 22.5 {
-                endcnt += 1
-            } else {
-                if fastcnt > 10 {
-                    endcnt = 0
-                    stopcnt = 0
-                }
-                fastcnt += 1
-            }
-        }
-    }
-    
-    // 位置情報の取得に失敗すると呼ばれる
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        
-    }
-    
-    // デバッグ用（バックグラウンド処理のタイプ）
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if (status == .restricted) {
-            print("機能制限している");
-        }
-        else if (status == .denied) {
-            print("許可していない");
-        }
-        else if (status == .authorizedWhenInUse) {
-            print("このアプリ使用中のみ許可している");
-            locationManager.startUpdatingLocation();
-        }
-        else if (status == .authorizedAlways) {
-            print("常に許可している");
-            locationManager.startUpdatingLocation();
-        }
-    }
-    
 }
-
 
 class AlertViewController: UIViewController{
     
@@ -415,6 +389,7 @@ class AlertViewController: UIViewController{
     override func viewDidLoad() {
         // スーパークラス
         super.viewDidLoad()
+        
     }
     
     @IBAction func closebtn(_ sender: Any) {
@@ -445,24 +420,27 @@ class AlertViewController: UIViewController{
         formatter.dateFormat = "ss"
         second = "\(formatter.string(from: picker.date))"
         text = year + "年" + month + "月" + day + "日" + hour + "時" + minute + "分"
-        // ???
+        
+        //
         var myDateComponents = DateComponents()
-        // ???
+        
         myDateComponents.year = Int(year)
         myDateComponents.month = Int(month)
         myDateComponents.day = Int(day)
         myDateComponents.hour = Int(hour)
         myDateComponents.minute = Int(minute)
-        // ???
+        //
         let trigger = UNCalendarNotificationTrigger(dateMatching: myDateComponents, repeats: false)
-        // ???
+        //
         let request = UNNotificationRequest(identifier: " Identifier", content: content, trigger: trigger)
+        //
         // 通知を登録
         center.add(request) { (error : Error?) in
             if error != nil {
                 // エラー処理
             }
         }
+        
         change_segue(move: "second")
     }
     
